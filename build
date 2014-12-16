@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CC="cc -std=c99 -O -Wall"
+AR="ar -rs"
+
+export LIBRARY_PATH="/opt/local/lib:$LIBRARY_PATH"
+export C_INCLUDE_PATH="/opt/local/include:$C_INCLUDE_PATH"
+
+[[ -d obj/ ]] || mkdir obj/
+[[ -d lib/ ]] || mkdir lib/
+
+$CC -o obj/sbuf.o -c src/sbuf.c
+$AR -c lib/libsbuf.a obj/*.o
