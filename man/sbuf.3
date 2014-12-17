@@ -36,6 +36,7 @@
 .Nm sbuf ,
 .Nm sbuf_new ,
 .Nm sbuf_new_auto ,
+.Nm sbuf_delete ,
 .Nm sbuf_clear ,
 .Nm sbuf_setpos ,
 .Nm sbuf_bcat ,
@@ -52,7 +53,6 @@
 .Nm sbuf_data ,
 .Nm sbuf_len ,
 .Nm sbuf_done ,
-.Nm sbuf_delete ,
 .Nm sbuf_start_section ,
 .Nm sbuf_end_section
 .Nd safe string composition
@@ -66,6 +66,8 @@
 .Fn sbuf_new "struct sbuf *s" "char *buf" "int length" "int flags"
 .Ft struct sbuf *
 .Fn sbuf_new_auto
+.Ft void
+.Fn sbuf_delete "struct sbuf *s"
 .Ft void
 .Fn sbuf_clear "struct sbuf *s"
 .Ft int
@@ -98,8 +100,6 @@
 .Fn sbuf_len "struct sbuf *s"
 .Ft int
 .Fn sbuf_done "struct sbuf *s"
-.Ft void
-.Fn sbuf_delete "struct sbuf *s"
 .Ft void
 .Fn sbuf_start_section "struct sbuf *s" "ssize_t *old_lenp"
 .Ft ssize_t
@@ -233,6 +233,45 @@ to the
 at the current position.
 .Pp
 The
+.Fn sbuf_cpy
+function replaces the contents of the
+.Fa sbuf
+with those of the NUL-terminated string
+.Fa str .
+This is equivalent to calling
+.Fn sbuf_cat
+with a fresh
+.Fa sbuf
+or one which position has been reset to zero with
+.Fn sbuf_clear
+or
+.Fn sbuf_setpos .
+.Pp
+The
+.Fn sbuf_printf
+function formats its arguments according to the format string pointed
+to by
+.Fa fmt
+and appends the resulting string to the
+.Fa sbuf
+at the current position.
+.Pp
+The
+.Fn sbuf_vprintf
+function behaves the same as
+.Fn sbuf_printf
+except that the arguments are obtained from the variable-length argument list
+.Fa ap .
+.Pp
+The
+.Fn sbuf_putc
+function appends the character
+.Fa c
+to the
+.Fa sbuf
+at the current position.
+.Pp
+The
 .Fn sbuf_set_drain
 function sets a drain function
 .Fa func
@@ -274,45 +313,6 @@ The
 and
 .Fn sbuf_data
 functions cannot be used on an sbuf with a drain.
-.Pp
-The
-.Fn sbuf_cpy
-function replaces the contents of the
-.Fa sbuf
-with those of the NUL-terminated string
-.Fa str .
-This is equivalent to calling
-.Fn sbuf_cat
-with a fresh
-.Fa sbuf
-or one which position has been reset to zero with
-.Fn sbuf_clear
-or
-.Fn sbuf_setpos .
-.Pp
-The
-.Fn sbuf_printf
-function formats its arguments according to the format string pointed
-to by
-.Fa fmt
-and appends the resulting string to the
-.Fa sbuf
-at the current position.
-.Pp
-The
-.Fn sbuf_vprintf
-function behaves the same as
-.Fn sbuf_printf
-except that the arguments are obtained from the variable-length argument list
-.Fa ap .
-.Pp
-The
-.Fn sbuf_putc
-function appends the character
-.Fa c
-to the
-.Fa sbuf
-at the current position.
 .Pp
 The
 .Fn sbuf_trim
@@ -456,16 +456,16 @@ function returns a non-zero value if the buffer has an overflow or
 drain error, and zero otherwise.
 .Pp
 The
+.Fn sbuf_finish
+function returns zero for success and \-1 and set errno on error.
+.Pp
+The
 .Fn sbuf_len
 function returns \-1 if the buffer overflowed.
 .Pp
 The
 .Fn sbuf_end_section
 function returns the section length or \-1 if the buffer has an error.
-.Pp
-The
-.Fn sbuf_finish 3
-function returns zero for success and \-1 and set errno on error.
 .Sh EXAMPLES
 .Bd -literal -compact
 #include <sbuf.h>
