@@ -132,7 +132,7 @@ If that pointer is
 allocates a
 .Vt struct sbuf
 using
-.Xr malloc 9 .
+.Xr malloc 3 .
 The
 .Fa buf
 argument is a pointer to a buffer in which to store the actual string;
@@ -140,7 +140,7 @@ if it is
 .Dv NULL ,
 .Fn sbuf_new
 will allocate one using
-.Xr malloc 9 .
+.Xr malloc 3 .
 The
 .Fa length
 is the initial size of the storage buffer.
