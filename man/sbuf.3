@@ -410,7 +410,7 @@ size of its storage buffer using
 or it is reinitialized to a sufficiently short string using
 .Fn sbuf_cpy .
 .Pp
-Drains in user-space will not always function as indicated.
+Drains will not always function as indicated.
 While the drain function will be called immediately on overflow from
 the
 .Fa sbuf_putc ,
@@ -423,7 +423,7 @@ and
 currently have no way to determine whether there will be an overflow
 until after it occurs, and cannot do a partial expansion of the format
 string.
-Thus when using libsbuf the buffer may be extended to allow completion
+Thus the buffer may be extended to allow completion
 of a single printf call, even though a drain is attached.
 .Sh RETURN VALUES
 The
@@ -464,15 +464,8 @@ The
 function returns the section length or \-1 if the buffer has an error.
 .Pp
 The
-.Fn sbuf_finish 9
-function (the kernel version) returns ENOMEM if the sbuf overflowed before
-being finished,
-or returns the error code from the drain if one is attached.
-.Pp
-The
 .Fn sbuf_finish 3
-function (the userland version)
-will return zero for success and \-1 and set errno on error.
+function returns zero for success and \-1 and set errno on error.
 .Sh EXAMPLES
 .Bd -literal -compact
 #include <sbuf.h>
