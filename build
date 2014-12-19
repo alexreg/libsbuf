@@ -6,8 +6,11 @@ AR="ar -rs"
 export LIBRARY_PATH="/opt/local/lib:$LIBRARY_PATH"
 export C_INCLUDE_PATH="/opt/local/include:$C_INCLUDE_PATH"
 
-[[ -d obj/ ]] || mkdir obj/
-[[ -d lib/ ]] || mkdir lib/
+BUILD_DIR="output"
 
-$CC -o obj/sbuf.o -c src/sbuf.c
-$AR -c lib/libsbuf.a obj/*.o
+[[ -d "$BUILD_DIR/" ]] || mkdir "$BUILD_DIR/"
+[[ -d "$BUILD_DIR/obj/" ]] || mkdir "$BUILD_DIR/obj/"
+[[ -d "$BUILD_DIR/lib/" ]] || mkdir "$BUILD_DIR/lib/"
+
+$CC -o "$BUILD_DIR/obj/sbuf.o" -c src/sbuf.c
+$AR -c "$BUILD_DIR/lib/libsbuf.a" "$BUILD_DIR/obj/"*.o

@@ -1,3 +1,2 @@
 syntax: regexp
-^obj/
-^lib/
+^output/
