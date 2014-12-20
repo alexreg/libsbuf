@@ -7,10 +7,14 @@ export LIBRARY_PATH="/opt/local/lib:$LIBRARY_PATH"
 export C_INCLUDE_PATH="/opt/local/include:$C_INCLUDE_PATH"
 
 BUILD_DIR="output"
+LIBRARY_NAME="libsbuf"
 
 [[ -d "$BUILD_DIR/" ]] || mkdir "$BUILD_DIR/"
 [[ -d "$BUILD_DIR/obj/" ]] || mkdir "$BUILD_DIR/obj/"
 [[ -d "$BUILD_DIR/lib/" ]] || mkdir "$BUILD_DIR/lib/"
 
-$CC -o "$BUILD_DIR/obj/sbuf.o" -c src/sbuf.c
-$AR -c "$BUILD_DIR/lib/libsbuf.a" "$BUILD_DIR/obj/"*.o
+for src_file in "src/"*.c ; do
+	src_file_basename="$(basename -s ".c" "$src_file")"
+	$CC -o "$BUILD_DIR/obj/$src_file_basename.o" -c "$src_file"
+done
+$AR -c "$BUILD_DIR/lib/$LIBRARY_NAME.a" "$BUILD_DIR/obj/"*.o
