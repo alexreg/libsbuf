@@ -8,7 +8,7 @@ The source code is based on the [source][FreeBSD source] of [FreeBSD 11][FreeBSD
 Building
 --------
 
-To build the library, simply run `./build` from the root directory of the project. This produces output in the `lib/` and `man/` directories (and intermediary output in `obj/`).
+To build the library, simply run `./build` from the root directory of the project. This produces all output in the `output` subdirectory.
 
 Installing
 ----------
