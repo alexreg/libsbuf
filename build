@@ -1,20 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-CC="cc -std=c99 -O -Wall"
-AR="ar -rs"
+source ./common
 
-export LIBRARY_PATH="/opt/local/lib:$LIBRARY_PATH"
-export C_INCLUDE_PATH="/opt/local/include:$C_INCLUDE_PATH"
-
-BUILD_DIR="output"
-LIBRARY_NAME="libsbuf"
-
-[[ -d "$BUILD_DIR/" ]] || mkdir "$BUILD_DIR/"
-[[ -d "$BUILD_DIR/obj/" ]] || mkdir "$BUILD_DIR/obj/"
-[[ -d "$BUILD_DIR/lib/" ]] || mkdir "$BUILD_DIR/lib/"
+if [[ ! -d "$BUILD_DIR/" ]] ; then mkdir "$BUILD_DIR/" ; fi &&
+if [[ ! -d "$BUILD_OBJ_DIR/" ]] ; then mkdir "$BUILD_OBJ_DIR/" ; fi &&
+if [[ ! -d "$BUILD_LIB_DIR/" ]] ; then mkdir "$BUILD_LIB_DIR/" ; fi &&
 
 for src_file in "src/"*.c ; do
-	src_file_basename="$(basename -s ".c" "$src_file")"
-	$CC -o "$BUILD_DIR/obj/$src_file_basename.o" -c "$src_file" || exit
-done
-$AR -c "$BUILD_DIR/lib/$LIBRARY_NAME.a" "$BUILD_DIR/obj/"*.o
+	src_file_basename="$(basename -s ".c" "$src_file")" &&
+	$CC -o "$BUILD_OBJ_DIR/$src_file_basename.o" -c "$src_file" \
+		|| exit 70 # EX_SOFTWARE
+done &&
+$AR -c "$BUILD_LIB_DIR/$LIBRARY_NAME.a" "$BUILD_OBJ_DIR/"*.o &&
+
+exit 0 # EX_OK

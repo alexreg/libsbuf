@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+CC="cc -std=c99 -Wall -v"
+AR="ar -rs"
+INSTALL="install -v"
+LN="ln -sf -v"
+
+LIBRARY_NAME="libsbuf"
+BUILD_DIR="output"
+BUILD_OBJ_DIR="$BUILD_DIR/obj"
+BUILD_LIB_DIR="$BUILD_DIR/lib"

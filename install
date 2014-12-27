@@ -1,16 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-INSTALL="install -v"
-LN="ln -sf -v"
+source ./common
 
-[[ -n "$INSTALL_PREFIX" ]] || INSTALL_PREFIX="/usr/local"
+if [[ -z "$INSTALL_PREFIX" ]] ; then INSTALL_PREFIX="/usr/local" ; fi
+INSTALL_LIB_PREFIX="$INSTALL_PREFIX/lib"
+INSTALL_INCLUDE_PREFIX="$INSTALL_PREFIX/include"
+INSTALL_MAN_PREFIX="$INSTALL_PREFIX/share/man"
 
-BUILD_DIR="output"
-MAN_PREFIX="$INSTALL_PREFIX/share/man"
+$INSTALL -m 644 "$BUILD_LIB_DIR/$LIBRARY_NAME.a" "$INSTALL_LIB_PREFIX" &&
+$INSTALL -m 644 "src/"sbuf.h "$INSTALL_INCLUDE_PREFIX" &&
+$INSTALL -m 644 "man/"sbuf.3 "$INSTALL_MAN_PREFIX/man3" &&
+for man_page in sbuf_new sbuf_new_auto sbuf_clear sbuf_setpos sbuf_bcat sbuf_bcpy sbuf_cat sbuf_cpy sbuf_printf sbuf_vprintf sbuf_putc sbuf_set_drain sbuf_trim sbuf_error sbuf_finish sbuf_data sbuf_len sbuf_done sbuf_delete sbuf_start_section sbuf_end_section ; do
+    $LN "$INSTALL_MAN_PREFIX/man3/sbuf.3" "$INSTALL_MAN_PREFIX/man3/$man_page.3"
+done &&
 
-$INSTALL -m 644 "$BUILD_DIR/lib/libsbuf.a" "$INSTALL_PREFIX/lib"
-$INSTALL -m 644 "src/sbuf.h" "$INSTALL_PREFIX/include"
-$INSTALL -m 644 "man/sbuf.3" "$MAN_PREFIX/man3"
-for ln_dest in {sbuf_new,sbuf_new_auto,sbuf_clear,sbuf_setpos,sbuf_bcat,sbuf_bcpy,sbuf_cat,sbuf_cpy,sbuf_printf,sbuf_vprintf,sbuf_putc,sbuf_set_drain,sbuf_trim,sbuf_error,sbuf_finish,sbuf_data,sbuf_len,sbuf_done,sbuf_delete,sbuf_start_section,sbuf_end_section}.3 ; do
-    $LN "$MAN_PREFIX/man3/sbuf.3" "$MAN_PREFIX/man3/$ln_dest"
-done
+exit 0 # EX_OK
