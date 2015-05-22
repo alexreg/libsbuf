@@ -31,6 +31,7 @@
 #ifndef _SBUF_H_
 #define	_SBUF_H_
 
+#include <stdarg.h>
 #include <unistd.h>
 
 #define	roundup(x, y) ((((x)+((y)-1))/(y))*(y)) /* to any y */
