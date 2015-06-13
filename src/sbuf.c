@@ -36,6 +36,9 @@
 #include "sbuf.h"
 #include "debug.h"
 
+#define	roundup(x, y) ((((x)+((y)-1))/(y))*(y)) /* to any y */
+#define	roundup2(x, y) (((x)+((y)-1))&(~((y)-1))) /* if y is powers of two */
+
 #define	SBMALLOC(size)		calloc(1, size)
 #define	SBFREE(buf)		free(buf)
 

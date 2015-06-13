@@ -34,9 +34,6 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-#define	roundup(x, y) ((((x)+((y)-1))/(y))*(y)) /* to any y */
-#define	roundup2(x, y) (((x)+((y)-1))&(~((y)-1))) /* if y is powers of two */
-
 // struct sbuf;
 typedef int (sbuf_drain_func)(void *, const char *, int);
 

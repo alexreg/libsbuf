@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CC="cc -std=c99 -Wall -v"
+CC="cc -std=c99"
 AR="ar -rs"
 INSTALL="install -v"
 LN="ln -sf -v"
