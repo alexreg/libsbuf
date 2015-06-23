@@ -2,15 +2,56 @@
 
 source ./common
 
+relpath () {
+    local common path up
+    common="${1%/}"
+	path="${2%/}/"
+    while [[ "$up${path#"$common"/}" == "$path" ]] ; do
+        common="${common%/*}"
+		up="../$up"
+    done
+    path="$up${path#"$common"/}"
+	path="${path%/}"
+	echo "${path:-.}"
+}
+
+export CPATH="/opt/local/include/:$C_INCLUDE_PATH"
+
+if [[ -z DEBUG ]] ; then DEBUG=0 ; fi &&
+if (( DEBUG )) ; then CC+=" -g" ; fi &&
+
+if [[ -e "$BUILD_OBJ_DIR/" ]] ; then rm -R "$BUILD_OBJ_DIR/" ; fi &&
+
 if [[ ! -d "$BUILD_DIR/" ]] ; then mkdir "$BUILD_DIR/" ; fi &&
 if [[ ! -d "$BUILD_OBJ_DIR/" ]] ; then mkdir "$BUILD_OBJ_DIR/" ; fi &&
-if [[ ! -d "$BUILD_LIB_DIR/" ]] ; then mkdir "$BUILD_LIB_DIR/" ; fi &&
+if [[ ! -d "$BUILD_BIN_DIR/" ]] ; then mkdir "$BUILD_BIN_DIR/" ; fi &&
 
-for src_file in "src/"*.c ; do
-	src_file_basename="$(basename -s ".c" "$src_file")" &&
-	$CC -o "$BUILD_OBJ_DIR/$src_file_basename.o" -c "$src_file" \
+SRC_DIR="src/" &&
+
+if [[ -n "${PKGCONFIG_DEPENDENCIES[@]}" ]] ; then
+	PKGCONFIG_INCLUDE_ARGS="$(pkg-config --cflags "${PKGCONFIG_DEPENDENCIES[@]}")"
+fi &&
+
+for src_file in "$SRC_DIR"**/*.c ; do
+	src_file_rel="${src_file#"$SRC_DIR"}"
+	obj_file="$BUILD_OBJ_DIR/${src_file_rel%.c}.o" &&
+	mkdir -p "$(dirname "$obj_file")" &&
+	$CC -o "$obj_file" -c "$src_file" $PKGCONFIG_INCLUDE_ARGS \
 		|| exit 70 # EX_SOFTWARE
 done &&
-$AR -c "$BUILD_LIB_DIR/$LIBRARY_NAME.a" "$BUILD_OBJ_DIR/"*.o &&
+if [[ -n "${DEPENDENCIES[@]}" ]] ; then
+	DEPS_ARGS="$(printf -- "-l%s " "${DEPENDENCIES[@]}")"
+fi &&
+if [[ -n "${PKGCONFIG_DEPENDENCIES[@]}" ]] ; then
+	PKGCONFIG_DEPS_ARGS="$(pkg-config --libs --static "${PKGCONFIG_DEPENDENCIES[@]}")"
+fi &&
+if [[ "$OUTPUT_TYPE" == program ]] ; then
+    $CC -o "$BUILD_BIN_DIR/$PROGRAM_NAME" "$BUILD_OBJ_DIR/"**/*.o $DEPS_ARGS $PKGCONFIG_DEPS_ARGS
+elif [[ "$OUTPUT_TYPE" == library ]] ; then
+    $AR -c "$BUILD_LIB_DIR/$LIBRARY_NAME.a" "$BUILD_OBJ_DIR/"**/*.o
+else
+    echo "invalid build type '$OUTPUT_TYPE'" >&2
+    exit 78 # EX_CONFIG
+fi &&
 
 exit 0 # EX_OK
