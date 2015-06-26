@@ -50,7 +50,7 @@ if [[ "$OUTPUT_TYPE" == program ]] ; then
 elif [[ "$OUTPUT_TYPE" == library ]] ; then
     $AR -c "$BUILD_LIB_DIR/$LIBRARY_NAME.a" "$BUILD_OBJ_DIR/"**/*.o
 else
-    echo "invalid build type '$OUTPUT_TYPE'" >&2
+    echo "invalid output type '$OUTPUT_TYPE'" >&2
     exit 78 # EX_CONFIG
 fi &&
 
