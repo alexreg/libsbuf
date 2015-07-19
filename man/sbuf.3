@@ -457,7 +457,9 @@ drain error, and zero otherwise.
 .Pp
 The
 .Fn sbuf_finish
-function returns zero for success and \-1 and set errno on error.
+function returns zero for success and \-1 and set
+.Va errno
+on error.
 .Pp
 The
 .Fn sbuf_len
